@@ -1,5 +1,6 @@
 import { QUERIES } from "~/server/db/queries";
 import DriveContents from "../../drive-contents";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function GoogleDriveClone(props: {
   params: Promise<{ folderId: string }>;
@@ -16,6 +17,8 @@ export default async function GoogleDriveClone(props: {
     QUERIES.getFiles(parsedFolderId),
     QUERIES.getAllParentsForFolder(parsedFolderId),
   ]);
+
+  console.log((await auth()))
 
   return <DriveContents files={files} folders={folders} parents={parents} />;
 }
