@@ -1,4 +1,7 @@
-import CustomSignInButton from "~/components/CustomSignInButton";
+import { AuthenticateWithRedirectCallback } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { Button } from "~/components/ui/button";
 
 export default function HomePage() {
   return (
@@ -9,7 +12,27 @@ export default function HomePage() {
       <p className="mx-auto mb-8 max-w-md text-xl text-neutral-400 md:text-2xl">
         Secure, fast, and easy file storage for the modern web
       </p>
-      <CustomSignInButton />
+      <form
+        action={async () => {
+          "use server";
+
+          const session = await auth();
+
+          if (!session.userId) {
+            return redirect("/sign-in");
+          }
+
+          return redirect("/drive");
+        }}
+      >
+        <Button
+          size="lg"
+          type="submit"
+          className="border border-neutral-700 bg-neutral-800 text-white transition-colors hover:bg-neutral-700"
+        >
+          Get Started
+        </Button>
+      </form>
       <footer className="mt-16 text-sm text-neutral-500">
         © {new Date().getFullYear()} Miguel Mercedes. All rights reserved.
       </footer>
