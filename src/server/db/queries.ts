@@ -39,6 +39,13 @@ export const QUERIES = {
       .from(files_table)
       .where(eq(files_table.parent, folderId));
   },
+  getFolderById: async function (folderId: number) {
+    const folder = await db
+      .select()
+      .from(folders_table)
+      .where(eq(folders_table.id, folderId));
+    return folder[0];
+  },
 };
 
 export const MUTATIONS = {
@@ -47,12 +54,13 @@ export const MUTATIONS = {
       name: string;
       size: number;
       url: string;
+      parent: number;
     };
     userId: string;
   }) {
     return db.insert(files_table).values({
       ...input.file,
-      parent: 1,
+      ownerId: input.userId,
     });
   },
 };

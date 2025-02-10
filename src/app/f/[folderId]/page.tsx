@@ -1,12 +1,12 @@
+import DriveContents from "~/app/drive-contents";
 import { QUERIES } from "~/server/db/queries";
-import DriveContents from "../../drive-contents";
 
 export default async function GoogleDriveClone(props: {
   params: Promise<{ folderId: string }>;
 }) {
-  const { folderId } = await props.params;
+  const params = await props.params;
 
-  const parsedFolderId = parseInt(folderId);
+  const parsedFolderId = parseInt(params.folderId);
   if (isNaN(parsedFolderId)) {
     return <div>Invalid folder ID</div>;
   }
@@ -17,5 +17,12 @@ export default async function GoogleDriveClone(props: {
     QUERIES.getAllParentsForFolder(parsedFolderId),
   ]);
 
-  return <DriveContents files={files} folders={folders} parents={parents} />;
+  return (
+    <DriveContents
+      files={files}
+      folders={folders}
+      parents={parents}
+      currentFolderId={parsedFolderId}
+    />
+  );
 }
