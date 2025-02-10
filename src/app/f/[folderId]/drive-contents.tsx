@@ -4,6 +4,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import CreateFolderButton from "~/components/CreateFolderButton";
 import { UploadButton } from "~/components/Uploadthing";
 import type { files_table, folders_table } from "~/server/db/schema";
 import { FileRow, FolderRow } from "./file-row";
@@ -20,32 +21,52 @@ export default function DriveContents(props: {
     <div className="min-h-screen bg-gray-900 p-8 text-gray-100">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center">
-            <Link className="mr-2 text-gray-300 hover:text-white" href={"/f/1"}>
-              My Drive
-            </Link>
-            {props.parents.map((folder) => (
-              <div key={folder.id} className="flex items-center">
-                <ChevronRight className="mx-2 text-gray-500" size={16} />
+          {/* Breadcrumbs */}
+          <nav className="flex items-center text-sm">
+            <ol className="flex items-center">
+              <li>
                 <Link
-                  className="text-gray-300 hover:text-white"
-                  href={`/f/${folder.id}`}
+                  className="text-gray-300 transition-colors hover:text-white"
+                  href="/f"
                 >
-                  {folder.name}
+                  My Drive
                 </Link>
-              </div>
-            ))}
-          </div>
-          {/* Authentication Buttons */}
-          <div>
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+              </li>
+              {props.parents.map((folder) => (
+                <li key={folder.id} className="flex items-center">
+                  <ChevronRight
+                    className="mx-2 text-gray-400"
+                    size={14}
+                    aria-hidden="true"
+                  />
+                  <Link
+                    className="text-gray-300 transition-colors hover:text-white"
+                    href={`/f/${folder.id}`}
+                  >
+                    {folder.name}
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </nav>
+
+          <div className="flex items-center space-x-4">
+            {/* Create folder */}
+            <CreateFolderButton parentId={props.currentFolderId} />
+
+            {/* Authentication Buttons */}
+            <div>
+              <SignedOut>
+                <SignInButton />
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+            </div>
           </div>
         </div>
+
+        {/* Table */}
         <div className="rounded-lg bg-gray-800 shadow-xl">
           <div className="border-b border-gray-700 px-6 py-4">
             <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-400">

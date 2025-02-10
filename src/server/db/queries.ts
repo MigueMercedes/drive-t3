@@ -4,6 +4,14 @@ import { and, eq, isNull } from "drizzle-orm";
 import { db } from "~/server/db";
 import { files_table, folders_table } from "./schema";
 
+/**
+ * QUERIES is responsible for database read operations and follows these principles:
+ * - Used for data reading operations (SELECT statements)
+ * - Does not modify database state
+ * - Contains reusable queries
+ * - Does not handle authentication directly
+ * - Does not manage client state (like cookies)
+ */
 export const QUERIES = {
   getAllParentsForFolder: async function (folderId: number) {
     const parents = [];

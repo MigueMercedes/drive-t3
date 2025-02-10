@@ -16,6 +16,57 @@ type OperationResult = {
   deletedFolders?: number;
 };
 
+export async function createFolderFromClient(
+  parentId: number,
+  folderName: string,
+): Promise<OperationResult> {
+  const session = await auth();
+  if (!session.userId) {
+    return { error: "Unauthorized" };
+  }
+
+  if (!folderName.trim()) {
+    return { error: "Folder name cannot be empty" };
+  }
+
+  try {
+    // Check if a folder with the same name already exists
+    const [existingFolder] = await db
+      .select()
+      .from(folders_table)
+      .where(
+        and(
+          eq(folders_table.name, folderName),
+          eq(folders_table.parent, parentId),
+          eq(folders_table.ownerId, session.userId),
+        ),
+      );
+
+    if (existingFolder) {
+      return { error: "A folder with this name already exists" };
+    }
+
+    // Create the folder
+    await db
+      .insert(folders_table)
+      .values({
+        name: folderName,
+        parent: parentId,
+        ownerId: session.userId,
+      })
+      .$returningId();
+
+    // Update client cookies to force a refresh
+    const c = await cookies();
+    c.set("force-refresh", JSON.stringify(Math.random()));
+
+    return { success: true };
+  } catch (error) {
+    console.error(`Error creating folder under parent ${parentId}:`, error);
+    return { error: `Failed to create folder: ${(error as Error).message}` };
+  }
+}
+
 async function deleteFile(
   fileId: number,
   userId: string,
