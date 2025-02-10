@@ -1,5 +1,6 @@
 import { QUERIES } from "~/server/db/queries";
 import DriveContents from "./drive-contents";
+import { notFound } from "next/navigation";
 
 export default async function GoogleDriveClone(props: {
   params: Promise<{ folderId: string }>;
@@ -11,18 +12,23 @@ export default async function GoogleDriveClone(props: {
     return <div>Invalid folder ID</div>;
   }
 
-  const [folders, files, parents] = await Promise.all([
-    QUERIES.getFolders(parsedFolderId),
-    QUERIES.getFiles(parsedFolderId),
-    QUERIES.getAllParentsForFolder(parsedFolderId),
-  ]);
+  try {
+    const [folders, files, parents] = await Promise.all([
+      QUERIES.getFolders(parsedFolderId),
+      QUERIES.getFiles(parsedFolderId),
+      QUERIES.getAllParentsForFolder(parsedFolderId),
+    ]);
 
-  return (
-    <DriveContents
-      files={files}
-      folders={folders}
-      parents={parents}
-      currentFolderId={parsedFolderId}
-    />
-  );
+    return (
+      <DriveContents
+        files={files}
+        folders={folders}
+        parents={parents}
+        currentFolderId={parsedFolderId}
+      />
+    );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    notFound();
+  }
 }

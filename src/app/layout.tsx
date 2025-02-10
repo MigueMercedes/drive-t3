@@ -18,9 +18,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <PostHogProvider>
-          <body>{children}</body>
+          <body>
+            <main>{children}</main>
+          </body>
         </PostHogProvider>
-        
       </html>
     </ClerkProvider>
   );
