@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { PostHogProvider } from "./_providers/posthog-provider";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Mercedes Drive",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <PostHogProvider>
           <body>
             <main>{children}</main>
+            <ToastContainer />
           </body>
         </PostHogProvider>
       </html>

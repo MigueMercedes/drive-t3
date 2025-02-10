@@ -1,7 +1,8 @@
 import { FileIcon, FolderIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
+import { DeleteFolderButton } from "~/components/DeleteFolderButton";
 import { Button } from "~/components/ui/button";
-import { deleteFile } from "~/server/actions";
+import { deleteFileFromClient } from "~/server/actions";
 import type { files_table, folders_table } from "~/server/db/schema";
 
 export function FileRow(props: { file: typeof files_table.$inferSelect }) {
@@ -23,9 +24,14 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
             {file.name}
           </a>
         </div>
-        <div className="col-span-3 text-gray-400">{file.size}</div>
-        <div className="col-span-3 text-gray-400">
-          <Button variant={"ghost"} onClick={() => deleteFile(file.id)} aria-label="Delete file">
+        <div className="col-span-2 text-gray-400">{"File"}</div>
+        <div className="col-span-2 text-gray-400">{Math.round(file.size / 1024)} KB</div>
+        <div className="col-span-1 text-gray-400">
+          <Button
+            variant={"ghost"}
+            onClick={() => deleteFileFromClient(file.id)}
+            aria-label="Delete file"
+          >
             <Trash2Icon size={20} />
           </Button>
         </div>
@@ -53,8 +59,11 @@ export function FolderRow(props: {
             {folder.name}
           </Link>
         </div>
-        <div className="col-span-3 text-gray-400"></div>
-        <div className="col-span-3 text-gray-400"></div>
+        <div className="col-span-2 text-gray-400">{"Folder"}</div>
+        <div className="col-span-2 text-gray-400">{"Unknown"}</div>
+        <div className="col-span-1 text-gray-400">
+          <DeleteFolderButton folderId={folder.id} />
+        </div>
       </div>
     </li>
   );

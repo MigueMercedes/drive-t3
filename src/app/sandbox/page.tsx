@@ -15,8 +15,6 @@ export default async function SandboxPage() {
     .from(folders_table)
     .where(eq(folders_table.ownerId, user.userId));
 
-  console.log(folders);
-
   if (folders) {
     return <div>{folders.map((folder) => folder.name).join(", ")}</div>;
   }
